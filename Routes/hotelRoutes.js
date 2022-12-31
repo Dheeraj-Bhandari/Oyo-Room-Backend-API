@@ -8,7 +8,7 @@ route.get("/" , (req, res)=>{
 })
 route.post("/addhotel" ,addHotel)
 route.get("/gethotels" ,getHotel)
-route.get("/gethotel/:id" ,getHotelById)
+route.get("/gethotels/:id" ,getHotelById)
 // route.get("/gethotels/:query" ,getHotelByQuery)
 
 
