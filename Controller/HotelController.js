@@ -38,47 +38,53 @@ export const getHotel = async (req, res) => {
   try {
     console.log("inside gethotel");
 
- 
-    const city = req.query.city || "";
-    const rating = req.query.rating || "";
-    
+    let match = {};
 
-    const { limit = 10, page = 1 } = req.query;
+    let page = parseInt(req.query.page) || 1;
+    let docPerPage = 10;
+    let skip = docPerPage * (page - 1);
+    let limit = docPerPage;
 
-    const hotels = await Hotels.aggregate( [ 
-       { $match: { city: new RegExp( city, "i"  )}}
-        // {
-        //   hotelName: {
-        //     $regex: ".*" + req.query.hotelName + ".*",
-        //     $options: "i",
-        //   },
-        // },
-        // { address: { $regex: ".*" + req.query.address + ".*", $options: "i" } },
-        // { rating: { $regex: ".*" + rating + ".*", $options: "i" } },
-      
-  
-])
-res.status(200).json(hotels)
-// .limit(limit * 1)
-//       .skip((page - 1) * limit);
+    if (req.query.city) {
+      match.city = new RegExp(req.query.city, "i");
+    }
+    if (req.query.rating) {
+      match.rating = new RegExp(req.query.rating, "i");
+    }
+    if (req.query.hotel) {
+      match.hotelName = new RegExp(req.query.hotel, "i");
+    }
+    if (req.query.address) {
+      match.address = new RegExp(req.query.address, "i");
+    }
+    if (req.query.facility) {
+      match.$or = [
+        { facility1: new RegExp(req.query.facility, "i") },
+        { facility2: new RegExp(req.query.facility, "i") },
+        { facility3: new RegExp(req.query.facility, "i") },
+      ];
+    }
 
-//     // const totalData = await hotels.countDocuments();
-//     console.log(totalData)
-//     let nextPage;
-//     let prevPage;
-//     if (page < totalData / limit - 1) {
-//       nextPage = Number(page) + 1;
-//     }
-//     if (page != 1) {
-//       prevPage = Number(page) - 1;
-//     }
-//     res.status(200).json({
-//       totalPage: Math.round(totalData / limit),
-//       currentPage: Number(page),
-//       nextPage: nextPage,
-//       prevPage: prevPage,
-//       hotels,
-//     });
+    let pipeline = [
+      { $match: match },
+      {
+        $facet: {
+          data: [{ $skip: skip }, { $limit: limit }],
+          datainfo: [{ $group: { _id: null, count: { $sum: 1 } } }],
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          page: `${page}`,
+          totalDocs : {$first : "$datainfo.count"},
+          hotels: "$data",
+        },
+      },
+    ];
+    const hotels = await Hotels.aggregate(pipeline);
+
+    res.status(200).json(hotels);
   } catch (error) {
     res.status(500).json(error);
   }
