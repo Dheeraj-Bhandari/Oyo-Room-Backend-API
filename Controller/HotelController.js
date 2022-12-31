@@ -38,81 +38,47 @@ export const getHotel = async (req, res) => {
   try {
     console.log("inside gethotel");
 
-    // const page = parseInt(req.query.page) - 1 || 0;
-    // const limit = parseInt(req.query.limit) || 10;
-    // const search = (req.query.search) || "";
-    // console.log(search)
-    // const sortbyprice = parseInt(req.query.sortbyprice) || "price";
-    // const sortbyrating = parseInt(req.query.sortbyrating) || "rating";
-    // const facility = (req.query.facility1) || "All";
-
-    // const facilitys = [
-    //   "Reception",
-    //   "Free Wi-Fi",
-    //   "Washing Machine",
-    //   "Balcony",
-    //   "Living Room",
-    //   "CCTV cameras",
-    //   "Parking facility",
-    //   "Elevator",
-    //   "Power backup",
-    //   "Private entrance",
-    //   "AC",
-    //   "TV",
-    //   "Hair Dryer",
-    //   "Doctor on call",
-    //   "Security",
-    //   "Geyser",
-    //   "Ticket tour assistance",
-    // ];
-
-    // facility === "All"
-    //   ? (facility = [...facilitys])
-    //   : (facility = req.query.facility.split(","));
-    // req.body.sortbyprice
-    //   ? (sortbyprice = req.query.sortbyprice.split(","))
-    //   : (sortbyprice = [sortbyprice]);
-
-    // let sortBy = {};
-    // if (sortbyprice[1]) {
-    //   sortBy[sortbyprice[0]] = sort[1];
-    // } else sortBy[sortbyprice[0]] = "asc";
+ 
     const city = req.query.city || "";
     const rating = req.query.rating || "";
-    const totalData = await Hotels.countDocuments();
+    
 
     const { limit = 10, page = 1 } = req.query;
-    const hotels = await Hotels.find({
-      $or: [
-        { city: { $regex: ".*" + city + ".*", $options: "i" } },
-        {
-          hotelName: {
-            $regex: ".*" + req.query.hotelName + ".*",
-            $options: "i",
-          },
-        },
-        { address: { $regex: ".*" + req.query.address + ".*", $options: "i" } },
-        { rating: { $regex: ".*" + rating + ".*", $options: "i" } },
-      ],
-    })
-      .limit(limit * 1)
-      .skip((page - 1) * limit);
 
-    let nextPage;
-    let prevPage;
-    if (page < totalData / limit - 1) {
-      nextPage = Number(page) + 1;
-    }
-    if (page != 1) {
-      prevPage = Number(page) - 1;
-    }
-    res.status(200).json({
-      totalPage: Math.round(totalData / limit),
-      currentPage: Number(page),
-      nextPage: nextPage,
-      prevPage: prevPage,
-      hotels,
-    });
+    const hotels = await Hotels.aggregate( [ 
+       { $match: { city: new RegExp( city, "i"  )}}
+        // {
+        //   hotelName: {
+        //     $regex: ".*" + req.query.hotelName + ".*",
+        //     $options: "i",
+        //   },
+        // },
+        // { address: { $regex: ".*" + req.query.address + ".*", $options: "i" } },
+        // { rating: { $regex: ".*" + rating + ".*", $options: "i" } },
+      
+  
+])
+res.status(200).json(hotels)
+// .limit(limit * 1)
+//       .skip((page - 1) * limit);
+
+//     // const totalData = await hotels.countDocuments();
+//     console.log(totalData)
+//     let nextPage;
+//     let prevPage;
+//     if (page < totalData / limit - 1) {
+//       nextPage = Number(page) + 1;
+//     }
+//     if (page != 1) {
+//       prevPage = Number(page) - 1;
+//     }
+//     res.status(200).json({
+//       totalPage: Math.round(totalData / limit),
+//       currentPage: Number(page),
+//       nextPage: nextPage,
+//       prevPage: prevPage,
+//       hotels,
+//     });
   } catch (error) {
     res.status(500).json(error);
   }
