@@ -4,7 +4,9 @@ const hotelRoute = express.Router();
 
 
 hotelRoute.get("/" , (req, res)=>{
-    res.send("Welcome to hotel api")
+    res.send({
+        filterType : ["facility", "city", "address","hotelName", "rating"]
+    })
 })
 hotelRoute.post("/addhotel" ,addHotel)
 hotelRoute.get("/gethotels" ,getHotel)
