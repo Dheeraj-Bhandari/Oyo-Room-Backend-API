@@ -43,7 +43,7 @@ export const getHotel = async (req, res) => {
     let page = parseInt(req.query.page) || 1;
     let docPerPage = 10;
     let skip = docPerPage * (page - 1);
-    let limit = docPerPage;
+    let limit = req.query.limit || docPerPage;
 
     if (req.query.city) {
       match.city = new RegExp(req.query.city, "i");

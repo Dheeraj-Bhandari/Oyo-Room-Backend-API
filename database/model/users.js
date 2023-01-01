@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema({
     bookedHotel:[
         {
           hotelid: {type: String, required: true},
-          time : { type : Date, default: Date.now }
+         data : {type:String}
         }]
       
    

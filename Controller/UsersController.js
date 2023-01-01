@@ -106,13 +106,18 @@ export const addUserHotel =async (req, res)=>{
     const headerToken = req.headers['authorization'];
     const hotelToSave = {
         hotelid : req.body.id,
+        timestamp : new Date(),
       
     }
     const userInfo = jwt.decode(headerToken)
    console.log(userInfo.data.email)
    console.log(hotelToSave)
     Users.findOneAndUpdate(userInfo.data.email, {$push: {"bookedHotel": hotelToSave}})
+       .then((res)=>{
         res.status(201).json({result : "hotel Added Succesfully"})
+       }).catch((err)=>{
+        res.status(500).json(err)
+       })
     
 
 }
