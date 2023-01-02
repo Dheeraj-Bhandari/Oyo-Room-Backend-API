@@ -41,7 +41,7 @@ export const getHotel = async (req, res) => {
     let match = {};
 
     let page = parseInt(req.query.page) || 1;
-    let docPerPage = 10;
+    let docPerPage = 5;
     let skip = docPerPage * (page - 1);
     let limit = req.query.limit || docPerPage;
 
