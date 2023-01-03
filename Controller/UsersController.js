@@ -43,7 +43,7 @@ export const userSignup =async (req , res)=>{
         jwt.sign({newUser}, secretKey, {expiresIn:'600s'}, (err, token)=>{
             if(err)res.status(500).json(err);
             res.status(201).json({
-                
+                newUser,
                 token
             })
         })
@@ -64,7 +64,7 @@ export const userLogin =async (req, res)=>{
             jwt.sign({data}, secretKey, {expiresIn:'600s'}, (err, token)=>{
                 if(err)res.status(500).json(err);
                 res.status(200).json({
-                   
+                    data,
                     token
                 })
             })
