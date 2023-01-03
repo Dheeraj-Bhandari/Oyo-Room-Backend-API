@@ -64,6 +64,34 @@ export const getHotel = async (req, res) => {
         { facility3: new RegExp(req.query.facility, "i") },
       ];
     }
+    if (req.query.facility1) {
+      match.$or = [
+        { facility1: new RegExp(req.query.facility1, "i") },
+        { facility2: new RegExp(req.query.facility1, "i") },
+        { facility3: new RegExp(req.query.facility1, "i") },
+      ];
+    }
+    if (req.query.facility2) {
+      match.$or = [
+        { facility1: new RegExp(req.query.facility2, "i") },
+        { facility2: new RegExp(req.query.facility2, "i") },
+        { facility3: new RegExp(req.query.facility2, "i") },
+      ];
+    }
+    if (req.query.facility3) {
+      match.$or = [
+        { facility1: new RegExp(req.query.facility3, "i") },
+        { facility2: new RegExp(req.query.facility3, "i") },
+        { facility3: new RegExp(req.query.facility3, "i") },
+      ];
+    }
+    if (req.query.facility4) {
+      match.$or = [
+        { facility1: new RegExp(req.query.facility4, "i") },
+        { facility2: new RegExp(req.query.facility4, "i") },
+        { facility3: new RegExp(req.query.facility4, "i") },
+      ];
+    }
 
     let pipeline = [
       { $match: match },
